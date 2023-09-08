@@ -1,3 +1,4 @@
+import EventList from "@/components/events/envent-list";
 import { getFeaturedEvents } from "@/dummy-data";
 
 function HomePage() {
@@ -5,7 +6,7 @@ function HomePage() {
 
   return (
     <div>
-      <ul></ul>
+      <EventList items={featuredEvents}/>
     </div>
   )
 }
