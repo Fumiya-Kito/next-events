@@ -8,7 +8,6 @@ export default function App({ Component, pageProps }) {
     <NotificationContextProvider>
       <Layout>
         <Component {...pageProps} />
-        <Notification title="Test" message="This is a test" status="success"/>
       </Layout>
     </NotificationContextProvider>
   )
