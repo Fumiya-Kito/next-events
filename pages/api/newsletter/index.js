@@ -19,7 +19,7 @@ async function handler(req, res) {
     }
     
     try {
-      await insertDocument(client, { email: userEmail });
+      await insertDocument(client, 'newsletters', { email: userEmail });
       client.close();
     } catch (err) {
       res.status(500).json({message: 'Inserting data failed!'});

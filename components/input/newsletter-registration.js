@@ -1,14 +1,10 @@
-import { useRef } from "react";
+import { useContext, useRef } from "react";
 import classes from "./newsletter-registration.module.css";
+import NotificationContext from "@/store/notification-context";
 
 function NewsletterRegistration() {
   const emailInputRef = useRef();
-
-  function validateEmail(email) {
-    // メールアドレスの正規表現を使用してバリデーションを行う
-    const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i;
-    return emailRegex.test(email);
-  }
+  const notificationCtx = useContext(NotificationContext);
 
   function registrationHandler(event) {
     event.preventDefault();
@@ -16,22 +12,46 @@ function NewsletterRegistration() {
     // fetch user input (state or refs)
     const enteredEmail = emailInputRef.current.value;
 
-    // optional: validate input
-    const isValid = validateEmail(enteredEmail);
     const reqBody = { email: enteredEmail };
 
+    // notification
+    notificationCtx.showNotification({
+      title: "Signing up...",
+      message: "Registering for newsletter",
+      status: "pending",
+    });
+
     // send valid data to API
-    if (isValid) {
-      fetch("/api/newsletter", {
-        method: "POST",
-        body: JSON.stringify(reqBody),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }).then(res => res.json()).then(data => console.log(data));
-    } else {
-      console.error('invalid email');
-    }
+    fetch("/api/newsletter", {
+      method: "POST",
+      body: JSON.stringify(reqBody),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => {
+        console.log(res);
+        console.log(reqBody);
+        if (res.ok) {
+          return res.json();
+        }
+
+        throw new Error("Somthing went wrong");
+      })
+      .then((data) => {
+        notificationCtx.showNotification({
+          title: "Success",
+          message: "Successfully registered for newsletter",
+          status: "success",
+        });
+      })
+      .catch((err) => {
+        notificationCtx.showNotification({
+          title: "Error!",
+          message: err.message || "Something went wrong!",
+          status: "error",
+        });
+      });
   }
 
   return (
